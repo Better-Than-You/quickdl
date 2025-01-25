@@ -7,10 +7,17 @@ from downloader.download_manager import DownloadManager
 class YouTubeDownloaderApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("YouTube Downloader")
-        self.root.geometry("450x400")
+        self.root.title("quickdl - A quick downloader") # Set window title
+        self.root.geometry("500x450")
         self.root.configure(bg="#f5f5f5")  # Light gray background
 
+         # Set the window logo (icon)
+        try:
+            self.root.iconbitmap("assets/icon.ico") 
+        except Exception as e:
+            print(f"Error loading icon: {e}")  # Handle errors if the icon file is not found
+
+        
         # Initialize styles
         self.configure_styles()
 
@@ -82,8 +89,14 @@ class YouTubeDownloaderApp:
         # Add a subtle border around the main content
         main_frame = ttk.Frame(self.root, padding="20", style="TFrame")
         main_frame.pack(fill=tk.BOTH, expand=True)
-
+        made_by_label = ttk.Label(self.root, text="Made by Sujatro🐦", font=("Segoe UI", 9), foreground="#666666")
+        made_by_label.pack(side=tk.RIGHT, padx=10, pady=10, anchor="se")  # Anchor to the bottom-right corner
+        
     def handle_download_click(self):
+        # Validate the URL
+        if not DownloadManager.is_yt_url(self.url_entry.get()):
+            messagebox.showerror("Error", "Please enter a YouTube URL")
+            return
         self.progress_label.config(text="Starting download...")
         self.start_download()
     
@@ -101,11 +114,6 @@ class YouTubeDownloaderApp:
         url = self.url_entry.get()
         resolution = self.resolution_var.get()
         include_audio = self.audio_var.get()
-        
-        # Validate the URL
-        if not DownloadManager.is_yt_url(url=url):
-            messagebox.showerror("Error", "Please enter a YouTube URL")
-            return
 
         # Ask the user where to save the file
         # Suggest a default filename based on the video title
